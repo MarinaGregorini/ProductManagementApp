@@ -3,208 +3,208 @@ from tkinter import *
 import sqlite3
 
 
-class Produto:
+class Product:
     def __init__(self, root):
-        self.janela = root
-        self.janela.title("App Gestor de Produtos")
-        self.janela.resizable(1,1)
-        self.janela.wm_iconbitmap("recursos\\icon.ico")
+        self.window = root
+        self.window.title("Product Manager App")
+        self.window.resizable(1,1)
+        self.window.wm_iconbitmap("resources\\icon.ico")
         
-        frame = LabelFrame(self.janela, text = "Registar um novo Produto", font=('Calibri', 16, 'bold'))
+        frame = LabelFrame(self.window, text = "Register a new product", font=('Calibri', 16, 'bold'))
         frame.grid(row=0, column=0, columnspan=3, pady=20)
         
-        self.etiqueta_nome = Label(frame, text="Nome: ", font=('Calibri', 13))
-        self.etiqueta_nome.grid(row=1, column=0)
+        self.name_tag = Label(frame, text="Name: ", font=('Calibri', 13))
+        self.name_tag.grid(row=1, column=0)
         
-        self.nome = Entry(frame, font=('Calibri', 13))
-        self.nome.focus()
-        self.nome.grid(row=1, column=1)
+        self.name = Entry(frame, font=('Calibri', 13))
+        self.name.focus()
+        self.name.grid(row=1, column=1)
         
-        self.etiqueta_preco = Label(frame, text="Preço: ", font=('Calibri', 13))
-        self.etiqueta_preco.grid(row=2, column=0)
+        self.name_tag = Label(frame, text="Price: ", font=('Calibri', 13))
+        self.name_tag.grid(row=2, column=0)
         
-        self.preco = Entry(frame, font=('Calibri', 13))
-        self.preco.grid(row=2, column=1)
+        self.price = Entry(frame, font=('Calibri', 13))
+        self.price.grid(row=2, column=1)
         
         s = ttk.Style()
         s.configure('my.TButton', font=('Calibri', 14, 'bold'))
-        self.botao_adicionar = ttk.Button(frame, text="Guardar Produto", command=self.add_produto, style='my.TButton')
-        self.botao_adicionar.grid(row=3, columnspan=2, sticky=W+E)
+        self.add_button = ttk.Button(frame, text="Save Product", command=self.add_product, style='my.TButton')
+        self.add_button.grid(row=3, columnspan=2, sticky=W+E)
         
-        self.mensagem = Label(text="", fg="red")
-        self.mensagem.grid(row=3, column=0, columnspan=2, sticky=W+E)
+        self.message = Label(text="", fg="red")
+        self.message.grid(row=3, column=0, columnspan=2, sticky=W+E)
         
         style = ttk.Style()
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=("Calibri", 11))
         style.configure("mystyle.Treeview.Heading", font=("Calibri", 13, "bold"))
         style.layout("mystyle.Treeview", [("mystyle.Treeview.treearea", {"sticky":"nswe"})])
         
-        self.tabela = ttk.Treeview(height=20, columns=2, style="mystyle.Treeview")
-        self.tabela.grid(row=4, column=0, columnspan=2)
-        self.tabela.heading("#0", text="Nome", anchor=CENTER)
-        self.tabela.heading("#1", text="Preço", anchor=CENTER)
+        self.table = ttk.Treeview(height=20, columns=2, style="mystyle.Treeview")
+        self.table.grid(row=4, column=0, columnspan=2)
+        self.table.heading("#0", text="Name", anchor=CENTER)
+        self.table.heading("#1", text="Price", anchor=CENTER)
         
         s = ttk.Style()
         s.configure('my.TButton', font=('Calibri', 14, 'bold'))
-        botao_eliminar = ttk.Button(text="ELIMINAR", command=self.del_produto, style='my.TButton')
-        botao_eliminar.grid(row=5, column=0, sticky=W+E)
+        delete_button = ttk.Button(text="DELETE", command=self.del_product, style='my.TButton')
+        delete_button.grid(row=5, column=0, sticky=W+E)
         
-        botao_editar = ttk.Button(text="EDITAR", command=self.edit_produto, style='my.TButton')
-        botao_editar.grid(row=5, column=1, sticky=W+E)
+        edit_button = ttk.Button(text="EDIT", command=self.edit_product, style='my.TButton')
+        edit_button.grid(row=5, column=1, sticky=W+E)
         
-        self.get_produtos()
+        self.get_products()
 
-    db = "database\\produtos.db"
+    db = "database\\products.db"
     
-    def db_consulta(self, consulta, parametros = ()):
+    def db_consult(self, consult, parameters = ()):
         
         with sqlite3.connect(self.db) as con:
             cursor = con.cursor()
-            resultado = cursor.execute(consulta, parametros)
+            result = cursor.execute(consult, parameters)
             con.commit()
         
-        return resultado
+        return result
     
-    def get_produtos(self):
+    def get_products(self):
         
-        registos_tabela = self.tabela.get_children()
-        for linha in registos_tabela:
-            self.tabela.delete(linha)
+        table_items = self.table.get_children()
+        for row in table_items:
+            self.table.delete(row)
             
-        query = "SELECT * FROM produto ORDER BY nome DESC"
-        registos_db = self.db_consulta(query)
+        query = "SELECT * FROM products ORDER BY name DESC"
+        items_db = self.db_consult(query)
         
-        for linha in registos_db:
-            self.tabela.insert("", 0, text= linha[1], values=linha[2])
+        for row in items_db:
+            self.table.insert("", 0, text= row[1], values=row[2])
     
-    def validacao_nome(self):
+    def name_validation(self):
         
-        nome_introduzido_por_utilizador = self.nome.get()
-        return len(nome_introduzido_por_utilizador) != 0
+        name_inserted = self.name.get()
+        return len(name_inserted) != 0
     
-    def validacao_preco(self):
+    def price_validation(self):
         
-        preco_introduzido_por_utilizador = self.preco.get()
-        return len(preco_introduzido_por_utilizador) != 0
+        price_inserted = self.price.get()
+        return len(price_inserted) != 0
 
-    def add_produto(self):
+    def add_product(self):
         
-        if self.validacao_nome() and self.validacao_preco():
-            query = "INSERT INTO produto VALUES(NULL, ?, ?)"
-            parametros = (self.nome.get(), self.preco.get())
+        if self.name_validation() and self.price_validation():
+            query = "INSERT INTO products VALUES(NULL, ?, ?)"
+            parameters = (self.name.get(), self.price.get())
             
-            self.db_consulta(query, parametros)
+            self.db_consult(query, parameters)
             
-            self.mensagem["text"] = f"Produto {self.nome.get()} adicionado com êxito."
-            self.nome.delete(0, END)
-            self.preco.delete(0, END)
+            self.message["text"] = f"Product {self.name.get()} added successfully."
+            self.name.delete(0, END)
+            self.price.delete(0, END)
         
-        elif self.validacao_nome and self.validacao_preco == False:
-            self.mensagem["text"] = "O Preço é obrigatório."
+        elif self.name_validation and self.price_validation == False:
+            self.message["text"] = "The price is mandatory."
         
-        elif self.validacao_nome == False and self.validacao_preco:
-            self.mensagem["text"] = "O Nome é obrigatório."
+        elif self.name_validation == False and self.price_validation:
+            self.message["text"] = "The Product's name is mandatory."
             
         else:
-            self.mensagem["text"] = "O Nome e o Preço são brigatórios."
+            self.message["text"] = "The Product's name and it's price are mandatory."
         
-        self.get_produtos()
+        self.get_products()
     
-    def del_produto(self):
-        self.mensagem["text"] = ""
+    def del_product(self):
+        self.message["text"] = ""
         
         try:
-            self.tabela.item(self.tabela.selection())["text"][0]
+            self.table.item(self.table.selection())["text"][0]
         except IndexError as e:
-            self.mensagem["text"] = "Por favor, selecione um produto"
+            self.message["text"] = "Please, choose a product."
             return
         
-        self.mensagem["text"] = ""
-        nome = self.tabela.item(self.tabela.selection())["text"]
-        query = "DELETE FROM produto WHERE nome = ?"
-        self.db_consulta(query, (nome,))
-        self.mensagem["text"] = f"Produto {nome} eliminado com êxito."
+        self.message["text"] = ""
+        name = self.table.item(self.table.selection())["text"]
+        query = "DELETE FROM products WHERE name = ?"
+        self.db_consult(query, (name,))
+        self.message["text"] = f"Product {name} deleted."
         
-        self.get_produtos()
+        self.get_products()
             
-    def edit_produto(self):
-        self.mensagem["text"] = ""
+    def edit_product(self):
+        self.message["text"] = ""
         
         try:
-            self.tabela.item(self.tabela.selection())["text"][0]
+            self.table.item(self.table.selection())["text"][0]
         except IndexError as e:
-            self.mensagem["text"] = "Por favor, selecione um produto"
+            self.message["text"] = "Please, choose a product."
             return        
     
-        nome = self.tabela.item(self.tabela.selection())["text"]
-        old_preco = self.tabela.item(self.tabela.selection())["values"][0]
+        name = self.table.item(self.table.selection())["text"]
+        old_price = self.table.item(self.table.selection())["values"][0]
         
-        self.janela_editar = Toplevel()
-        self.janela_editar.title = "Editar produto"
-        self.janela_editar.resizable(1,1)
-        self.janela_editar.wm_iconbitmap("recursos\\icon.ico")
+        self.edit_window = Toplevel()
+        self.edit_window.title = "Edit product"
+        self.edit_window.resizable(1,1)
+        self.edit_window.wm_iconbitmap("resources\\icon.ico")
         
-        titulo = Label(self.janela_editar, text="Edição de produtos", font = ("Calibri", 16, "bold"))
-        titulo.grid(row=0, column=0)
+        title = Label(self.edit_window, text="Edit product", font = ("Calibri", 16, "bold"))
+        title.grid(row=0, column=0)
         
-        frame_ep = LabelFrame(self.janela_editar, text="Editar o seguinte produto:", font=('Calibri', 16, 'bold'))
+        frame_ep = LabelFrame(self.edit_window, text="Edit the following product:", font=('Calibri', 16, 'bold'))
         frame_ep.grid(row=1, column=0, columnspan=20, pady=20)
         
-        self.etiqueta_nome_antigo = Label(frame_ep, text="Nome antigo: ", font=('Calibri', 13))
-        self.etiqueta_nome_antigo.grid(row=2, column=0) 
-        self.input_nome_antigo = Entry(frame_ep, textvariable=StringVar(self.janela_editar, value=nome), state='readonly', font=('Calibri', 13))
-        self.input_nome_antigo.grid(row=2, column=1)
+        self.old_name_tag = Label(frame_ep, text="Former name: ", font=('Calibri', 13))
+        self.old_name_tag.grid(row=2, column=0) 
+        self.input_old_name = Entry(frame_ep, textvariable=StringVar(self.edit_window, value=name), state='readonly', font=('Calibri', 13))
+        self.input_old_name.grid(row=2, column=1)
         
-        self.etiqueta_nome_novo = Label(frame_ep, text="Nome novo: ", font=('Calibri', 13))
-        self.etiqueta_nome_novo.grid(row=3, column=0)
-        self.input_nome_novo = Entry(frame_ep, font=('Calibri', 13))
-        self.input_nome_novo.grid(row=3, column=1)
-        self.input_nome_novo.focus()
+        self.new_name_tag = Label(frame_ep, text="New name: ", font=('Calibri', 13))
+        self.new_name_tag.grid(row=3, column=0)
+        self.input_new_name = Entry(frame_ep, font=('Calibri', 13))
+        self.input_new_name.grid(row=3, column=1)
+        self.input_new_name.focus()
         
-        self.etiqueta_preco_antigo = Label(frame_ep, text="Preço antigo: ", font=('Calibri', 13))
-        self.etiqueta_preco_antigo.grid(row=4, column=0)
-        self.input_preco_antigo = Entry(frame_ep, textvariable=StringVar(self.janela_editar, value=old_preco), state='readonly', font=('Calibri', 13))
-        self.input_preco_antigo.grid(row=4, column=1)
+        self.old_price_tag = Label(frame_ep, text="Former price: ", font=('Calibri', 13))
+        self.old_price_tag.grid(row=4, column=0)
+        self.input_old_price = Entry(frame_ep, textvariable=StringVar(self.edit_window, value=old_price), state='readonly', font=('Calibri', 13))
+        self.input_old_price.grid(row=4, column=1)
 
-        self.etiqueta_preco_novo = Label(frame_ep, text="Preço novo: ", font=('Calibri', 13))
-        self.etiqueta_preco_novo.grid(row=5, column=0)
-        self.input_preco_novo = Entry(frame_ep, font=('Calibri', 13))
-        self.input_preco_novo.grid(row=5, column=1)
+        self.new_price_tag = Label(frame_ep, text="New price: ", font=('Calibri', 13))
+        self.new_price_tag.grid(row=5, column=0)
+        self.input_new_price = Entry(frame_ep, font=('Calibri', 13))
+        self.input_new_price.grid(row=5, column=1)
 
         s = ttk.Style()
         s.configure('my.TButton', font=('Calibri', 14, 'bold'))
-        self.botao_atualizar = ttk.Button(frame_ep, text="Atualizar Produto", style='my.TButton', command=lambda: self.atualizar_produtos(self.input_nome_novo.get(), self.input_nome_antigo.get(), self.input_preco_novo.get(), self.input_preco_antigo.get()))
-        self.botao_atualizar.grid(row=6, columnspan=2, sticky=W + E)
+        self.refresh_button = ttk.Button(frame_ep, text="Update product", style='my.TButton', command=lambda: self.update_product(self.input_new_name.get(), self.input_old_name.get(), self.input_new_price.get(), self.input_old_price.get()))
+        self.refresh_button.grid(row=6, columnspan=2, sticky=W + E)
         
-    def atualizar_produtos(self, novo_nome, antigo_nome, novo_preco, antigo_preco):
+    def update_product(self, new_name, old_name, new_price, old_price):
         
-        produto_modificado = False
-        query = 'UPDATE produto SET nome = ?, preço = ? WHERE nome = ? AND preço = ?'
+        updated_product = False
+        query = 'UPDATE products SET name = ?, price = ? WHERE name = ? AND price = ?'
         
-        if novo_nome != '' and novo_preco != '':
-            parametros = (novo_nome, novo_preco, antigo_nome, antigo_preco)
-            produto_modificado = True
+        if new_name != '' and new_price != '':
+            parameters = (new_name, new_price, old_name, old_price)
+            updated_product = True
         
-        elif novo_nome != '' and novo_preco == '':
-            parametros = (novo_nome, antigo_preco, antigo_nome, antigo_preco)
-            produto_modificado = True
+        elif new_name != '' and new_price == '':
+            parameters = (new_name, old_price, old_name, old_price)
+            updated_product = True
             
-        elif novo_nome == '' and novo_preco != '':
-            parametros = (antigo_nome, novo_preco, antigo_nome, antigo_preco)
-            produto_modificado = True 
+        elif new_name == '' and new_price != '':
+            parametros = (old_name, new_price, old_name, old_price)
+            updated_product = True 
         
-        if (produto_modificado):
-            self.db_consulta(query, parametros)
-            self.janela_editar.destroy()
-            self.mensagem['text'] = f'O produto {antigo_nome} foi atualizado com êxito'
-            self.get_produtos()
+        if (updated_product):
+            self.db_consult(query, parameters)
+            self.edit_window.destroy()
+            self.message['text'] = f'The item {old_name} was updated'
+            self.get_products()
         
         else:
-            self.janela_editar.destroy()
-            self.mensagem['text'] = f'O produto {antigo_nome} NÃO foi atualizado'
+            self.edit_window.destroy()
+            self.message['text'] = f'The item {old_name} wasn\'t updated'
         
 if __name__ == "__main__":
     root = Tk()
-    app = Produto(root)
+    app = Product(root)
     root.mainloop()
     
